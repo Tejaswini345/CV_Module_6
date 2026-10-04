@@ -1,13 +1,15 @@
 """
-app.py - tiny web demo.   Run:  python app.py   then open http://127.0.0.1:5000
-Once we put our videos in the  videos/  folder; they appear in the dropdown automatically.
+app.py - web demo.   Local:  python app.py   ->  http://127.0.0.1:5000
+Server: gunicorn app:app
+Videos in videos/ appear in the dropdown. Flow results are cached in outputs/.
 """
-import os
+import os, json
 from flask import Flask, jsonify, request, render_template, send_from_directory
 import flow, sfm
 
 app = Flask(__name__)
 VIDEO_EXT = (".mp4", ".mov", ".avi", ".mkv", ".webm")
+os.makedirs("outputs", exist_ok=True)
 
 
 @app.route("/")
@@ -33,7 +35,13 @@ def _name(v):
 @app.route("/api/flow", methods=["POST"])
 def api_flow():
     v = request.json["video"]
-    return jsonify(flow.dense_flow_video(os.path.join("videos", v), _name(v)))
+    name = _name(v)
+    cache = f"outputs/{name}_flowcache.json"
+    if os.path.exists(cache) and os.path.exists(f"outputs/{name}_flow.mp4"):
+        return jsonify(json.load(open(cache)))           # saved result: instant
+    result = flow.dense_flow_video(os.path.join("videos", v), name)
+    json.dump(result, open(cache, "w"))
+    return jsonify(result)
 
 
 @app.route("/api/track", methods=["POST"])
