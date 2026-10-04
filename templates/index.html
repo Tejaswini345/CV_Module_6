@@ -1,0 +1,57 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>CSc 8830 - Assignment 6</title>
+<style>
+ body{font-family:Arial,sans-serif;max-width:1000px;margin:20px auto;padding:0 12px}
+ section{border:1px solid #ccc;border-radius:8px;padding:14px;margin:16px 0}
+ video,img{max-width:100%} table{border-collapse:collapse;font-size:13px} td,th{border:1px solid #bbb;padding:4px 8px}
+ pre{background:#f4f4f4;padding:8px;overflow:auto} button{padding:6px 14px}
+</style></head><body>
+<h1>CSc 8830 Computer Vision - Assignment 6</h1>
+<section>
+ <h2>Part 1: Optical flow &amp; tracking</h2>
+ <label>Choose video: <select id="vid">
+  {% for v in videos %}<option>{{ v }}</option>{% else %}<option value="">(put videos in the videos/ folder)</option>{% endfor %}
+ </select></label>
+ <p>Original: <video id="orig" controls width="420"></video></p>
+ <button onclick="runFlow()">1. Compute optical flow video</button>
+ <div id="flowOut"></div>
+ <hr>
+ Frame number <input id="frame" type="number" value="150" style="width:70px"> gap <input id="step" type="number" value="1" style="width:50px">
+ <button onclick="runTrack()">2. Validate tracking (my LK vs OpenCV)</button>
+ <div id="trackOut"></div>
+</section>
+<section>
+ <h2>Part 2: Structure from motion (4 views, planar object)</h2>
+ <button onclick="runSfm()">Run SfM</button>
+ <div id="sfmOut"></div>
+</section>
+<script>
+const $=id=>document.getElementById(id);
+const vid=()=>$('vid').value;
+function setOrig(){ if(vid()) $('orig').src='/videos/'+vid(); }
+$('vid').onchange=setOrig; setOrig();
+async function post(url,body){ const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); return r.json(); }
+async function runFlow(){
+  $('flowOut').innerHTML='Processing (can take a minute)...';
+  const r=await post('/api/flow',{video:vid()});
+  $('flowOut').innerHTML=`<video controls src="${r.video}?t=${Date.now()}" width="900"></video>
+   <p>Left: frame with flow arrows. Right: colour = direction, brightness = speed.</p>
+   <img src="${r.evidence}?t=${Date.now()}"><p>Mean speed (px/frame) per second of video: ${r.mean_speed_px_per_frame_each_second.join(', ')}</p>`;
+}
+async function runTrack(){
+  $('trackOut').innerHTML='Working...';
+  const r=await post('/api/track',{video:vid(),frame:$('frame').value,step:$('step').value});
+  if(r.error){$('trackOut').innerHTML='Error: '+r.error;return;}
+  let t='<table><tr><th>#</th><th>Frame1 (x,y)</th><th>My flow (u,v)</th><th>Predicted frame2</th><th>OpenCV frame2</th><th>Error px</th><th>AtA eigenvalues</th></tr>';
+  r.points.forEach(p=>t+=`<tr><td>${p.point}</td><td>${p.frame1_xy}</td><td>${p.my_flow_uv}</td><td>${p.predicted_frame2_xy}</td><td>${p.opencv_frame2_xy}</td><td>${p.error_px}</td><td>${p.eigenvalues}</td></tr>`);
+  $('trackOut').innerHTML=`<p>Frames ${r.frames.join(' -> ')}. Green = point in frame 1, red circle = my prediction, blue dot = OpenCV.</p><img src="${r.image}?t=${Date.now()}">${t}</table>`;
+}
+async function runSfm(){
+  $('sfmOut').innerHTML='Working...';
+  const r=await post('/api/sfm',{});
+  let t='<table><tr><th>View</th><th>Camera position (cm)</th><th>Reproj. error px</th></tr>';
+  r.cameras.forEach(c=>t+=`<tr><td>${c.image}</td><td>${c.camera_position_cm}</td><td>${c.mean_reprojection_error_px}</td></tr>`);
+  $('sfmOut').innerHTML=`<img src="${r.image}?t=${Date.now()}">${t}</table>
+   <p>Area: estimated ${r.area_estimated_cm2} cm&sup2; vs ruler ${r.area_true_cm2} cm&sup2;</p><pre>${JSON.stringify(r.recovered_points_cm)}</pre>`;
+}
+</script></body></html>

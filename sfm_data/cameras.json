@@ -1,0 +1,200 @@
+{
+ "image_size_px": [
+  960,
+  1280
+ ],
+ "K_note": "estimated for a phone main camera: fx=fy=0.75*1280, cx=480, cy=640 (for 960x1280 images)",
+ "K": [
+  [
+   960,
+   0,
+   480
+  ],
+  [
+   0,
+   960,
+   640
+  ],
+  [
+   0,
+   0,
+   1
+  ]
+ ],
+ "world_points_cm": {
+  "A": [
+   3,
+   3.5
+  ],
+  "B": [
+   2,
+   13.6
+  ],
+  "C": [
+   3.25,
+   25.5
+  ],
+  "D": [
+   9,
+   20
+  ],
+  "E": [
+   11.5,
+   26.5
+  ],
+  "F": [
+   19.5,
+   26
+  ],
+  "G": [
+   19,
+   2.5
+  ]
+ },
+ "boundary_order": [
+  "A",
+  "B",
+  "C",
+  "E",
+  "F",
+  "G"
+ ],
+ "views": [
+  {
+   "image": "view1.jpg",
+   "camera_note": "near-overhead view, paper on wooden table (EDIT: distance/height in cm)",
+   "points_px": {
+    "A": [
+     126.5,
+     1055.7
+    ],
+    "B": [
+     96.3,
+     614.6
+    ],
+    "C": [
+     145.5,
+     133.2
+    ],
+    "D": [
+     400.6,
+     359.6
+    ],
+    "E": [
+     493.0,
+     94.0
+    ],
+    "F": [
+     829.0,
+     100.3
+    ],
+    "G": [
+     830.8,
+     1095.4
+    ]
+   }
+  },
+  {
+   "image": "view2.jpg",
+   "camera_note": "tilted view from the left-bottom, paper on carpet (EDIT: distance/height in cm)",
+   "points_px": {
+    "A": [
+     193.2,
+     1053.3
+    ],
+    "B": [
+     140.7,
+     579.0
+    ],
+    "C": [
+     173.1,
+     123.8
+    ],
+    "D": [
+     413.0,
+     373.9
+    ],
+    "E": [
+     467.9,
+     177.8
+    ],
+    "F": [
+     684.5,
+     242.8
+    ],
+    "G": [
+     763.9,
+     981.9
+    ]
+   }
+  },
+  {
+   "image": "view3.jpg",
+   "camera_note": "tilted view from the right, phone shadow on paper (EDIT: distance/height in cm)",
+   "points_px": {
+    "A": [
+     129.5,
+     1019.6
+    ],
+    "B": [
+     144.3,
+     649.6
+    ],
+    "C": [
+     207.0,
+     311.3
+    ],
+    "D": [
+     368.0,
+     418.8
+    ],
+    "E": [
+     439.8,
+     217.3
+    ],
+    "F": [
+     708.6,
+     135.4
+    ],
+    "G": [
+     782.6,
+     1068.0
+    ]
+   }
+  },
+  {
+   "image": "view4.jpg",
+   "camera_note": "low oblique view from the bottom edge (EDIT: distance/height in cm)",
+   "points_px": {
+    "A": [
+     152.9,
+     806.0
+    ],
+    "B": [
+     206.1,
+     505.4
+    ],
+    "C": [
+     296.6,
+     279.0
+    ],
+    "D": [
+     453.9,
+     382.5
+    ],
+    "E": [
+     523.1,
+     271.1
+    ],
+    "F": [
+     741.0,
+     277.0
+    ],
+    "G": [
+     836.1,
+     860.6
+    ]
+   }
+  }
+ ]
+}
